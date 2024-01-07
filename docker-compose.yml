@@ -4,20 +4,33 @@ services:
   postgres:
     image: postgres:16
     env_file: ./db.env
+    environment:
+      - POSTGRES_DB=funny_dolphine
+      - POSTGRES_USER=postgres
     ports:
       - "5432:5432"
     volumes:
       - pg_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - default
 
   funny_dolphine:
     build:
       context: .
       dockerfile: Dockerfile
     restart: always
-    network_mode: host
-    env_file: ./env.list
+    env_file: ./web.env
+    ports:
+      - "8000:8000"
     depends_on:
       - postgres
+    networks:
+      - default
 
 volumes:
   pg_data:
+
+networks:
+    default:
+        driver: bridge

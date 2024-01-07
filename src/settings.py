@@ -1,5 +1,3 @@
-from typing import Optional
-
 from pydantic import ConfigDict
 from pydantic_settings import BaseSettings
 
@@ -24,18 +22,6 @@ class DatabaseSettings(BaseSettings):
     )
 
 
-class LoggingSettings(BaseSettings):
-    loki_protocol: str = "https"
-    loki_host: Optional[str] = None
-    loki_user: str = "loki"
-    loki_password: Optional[str] = None
-
-    logging_format: str
-
-    def get_loki_url(self) -> str:
-        return f"{self.loki_protocol}://{self.loki_user}:{self.loki_password}@{self.loki_host}/loki/api/v1/push"
-
-
 class AppSettings(BaseSettings):
     """
     Settings for the whole application.
@@ -45,11 +31,13 @@ class AppSettings(BaseSettings):
 
     debug: bool = False
 
+    jwt_secret_key: str
+    admin_password: str
+
+    api_key: str
+
     database: DatabaseSettings = DatabaseSettings(
         _env_file="db.env", _env_file_encoding="utf-8"
-    )
-    logging: LoggingSettings = LoggingSettings(
-        _env_file="logging.env", _env_file_encoding="utf-8"
     )
 
     def get_database_uri(self) -> str:

@@ -1,0 +1,2 @@
+MISSING_API_KEY_ERROR = "Missing API key"
+INVALID_API_KEY_ERROR = "Invalid API key"
