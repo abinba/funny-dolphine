@@ -1,3 +1,3 @@
 docker-compose --compatibility down;
 
-docker-compose --compatibility up -d;
+docker-compose --build --compatibility up -d;
