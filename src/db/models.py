@@ -32,7 +32,12 @@ class UserSettings(BaseABC):
     account_id = sa.Column(
         sa.Integer, sa.ForeignKey("account.account_id"), primary_key=True
     )
-    account = relationship("Account", backref="settings")
+    account = relationship(
+        "Account",
+        backref="settings",
+        cascade="all, delete-orphan",
+        single_parent=True,
+    )
 
     theme = sa.Column(sa.String(40), server_default="light")
     profile_picture = sa.Column(sa.String(2048), server_default="default.png")
@@ -65,6 +70,68 @@ class Audiobook(BaseABC):
 
     def __str__(self):
         return f"{self.title} by {self.author}"
+
+
+class Chapter(BaseABC):
+    __tablename__ = "chapter"
+
+    chapter_id = sa.Column(sa.Integer, primary_key=True, index=True)
+    chapter_ordered_id = sa.Column(sa.Integer, nullable=False, index=True)
+
+    audiobook_id = sa.Column(sa.Integer, sa.ForeignKey("audiobook.audiobook_id"))
+    parent_id = sa.Column(sa.Integer, sa.ForeignKey("chapter.chapter_id"), default=None)
+
+    sub_title = sa.Column(sa.String(120), nullable=False, index=True)
+    full_text = sa.Column(sa.Text, nullable=True)
+    duration = sa.Column(sa.Integer, nullable=False)
+    audio_file_url = sa.Column(sa.String(2048), nullable=False)
+
+    audiobook = relationship(
+        "Audiobook",
+        backref="chapters",
+        cascade="all, delete",
+        single_parent=True,
+    )
+    children = relationship(
+        "Chapter",
+        back_populates="parent",
+        lazy="joined",
+        join_depth=1,
+    )
+    parent = relationship(
+        "Chapter", back_populates="children", remote_side=[chapter_id]
+    )
+
+    def __str__(self):
+        return f"{self.chapter_id} {self.sub_title}"
+
+
+class UserChapter(BaseABC):
+    __tablename__ = "user_chapter"
+
+    user_chapter_id = sa.Column(sa.Integer, primary_key=True, index=True)
+
+    account_id = sa.Column(sa.Integer, sa.ForeignKey("account.account_id"))
+    account = relationship(
+        "Account",
+        backref="user_chapters",
+        cascade="all, delete-orphan",
+        single_parent=True,
+    )
+
+    chapter_id = sa.Column(sa.Integer, sa.ForeignKey("chapter.chapter_id"))
+    chapter = relationship(
+        "Chapter",
+        backref="user_chapters",
+        cascade="all, delete-orphan",
+        single_parent=True,
+    )
+
+    explored = sa.Column(sa.Boolean, default=True)
+    listened_times = sa.Column(sa.Integer, default=1)
+
+    def __str__(self):
+        return f"{self.account_id} - {self.chapter_id}"
 
 
 class Category(BaseABC):
