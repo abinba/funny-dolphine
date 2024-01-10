@@ -7,10 +7,8 @@ from src.db import Base
 class BaseABC(Base):
     __abstract__ = True
 
-    created_at = sa.Column(sa.DateTime, server_default=sa.func.now())
-    updated_at = sa.Column(
-        sa.DateTime, server_default=sa.func.now(), onupdate=sa.func.now()
-    )
+    created_at = sa.Column(sa.DateTime, default=sa.func.now())
+    updated_at = sa.Column(sa.DateTime, default=sa.func.now(), onupdate=sa.func.now())
 
     def __repr__(self):
         return f"<{self.__class__.__name__} {self.__dict__}>"
@@ -76,7 +74,7 @@ class Chapter(BaseABC):
     __tablename__ = "chapter"
 
     chapter_id = sa.Column(sa.Integer, primary_key=True, index=True)
-    chapter_ordered_id = sa.Column(sa.Integer, nullable=False, index=True)
+    chapter_ordered_id = sa.Column(sa.String(100), nullable=False, index=True)
 
     audiobook_id = sa.Column(sa.Integer, sa.ForeignKey("audiobook.audiobook_id"))
     parent_id = sa.Column(sa.Integer, sa.ForeignKey("chapter.chapter_id"), default=None)
@@ -114,7 +112,6 @@ class UserChapter(BaseABC):
     account_id = sa.Column(sa.Integer, sa.ForeignKey("account.account_id"))
     account = relationship(
         "Account",
-        backref="user_chapters",
         cascade="all, delete-orphan",
         single_parent=True,
     )
@@ -122,16 +119,46 @@ class UserChapter(BaseABC):
     chapter_id = sa.Column(sa.Integer, sa.ForeignKey("chapter.chapter_id"))
     chapter = relationship(
         "Chapter",
-        backref="user_chapters",
         cascade="all, delete-orphan",
         single_parent=True,
     )
 
-    explored = sa.Column(sa.Boolean, default=True)
     listened_times = sa.Column(sa.Integer, default=1)
 
     def __str__(self):
         return f"{self.account_id} - {self.chapter_id}"
+
+
+class UserAudiobook(BaseABC):
+    __tablename__ = "user_audiobook"
+
+    user_audiobook_id = sa.Column(sa.Integer, primary_key=True, index=True)
+
+    account_id = sa.Column(sa.Integer, sa.ForeignKey("account.account_id"))
+    account = relationship(
+        "Account",
+        cascade="all, delete-orphan",
+        single_parent=True,
+    )
+
+    audiobook_id = sa.Column(sa.Integer, sa.ForeignKey("audiobook.audiobook_id"))
+    audiobook = relationship(
+        "Audiobook",
+        cascade="all, delete-orphan",
+        single_parent=True,
+    )
+
+    last_listened_chapter_id = sa.Column(
+        sa.Integer, sa.ForeignKey("chapter.chapter_id")
+    )
+    last_listened_chapter = relationship(
+        "Chapter",
+        cascade="all, delete-orphan",
+        single_parent=True,
+    )
+
+    def __str__(self):
+        return f"{self.account_id} - {self.audiobook_id} - {self.last_listened_chapter}"
 
 
 class Category(BaseABC):
