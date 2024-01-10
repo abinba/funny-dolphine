@@ -1,6 +1,13 @@
 from fastapi import APIRouter
 
-from .endpoints import audiobook, category, settings, account, chapter, user_chapter
+from .endpoints import (
+    audiobook,
+    category,
+    settings,
+    account,
+    chapter,
+    user_audiobook,
+)
 
 v1_router = APIRouter()
 
@@ -12,5 +19,5 @@ v1_router.include_router(
     chapter.router, prefix="/audiobook_chapters", tags=["audiobook_chapters"]
 )
 v1_router.include_router(
-    user_chapter.router, prefix="/user_chapter", tags=["user_chapter"]
+    user_audiobook.router, prefix="/user_audiobook", tags=["user_audiobook"]
 )
