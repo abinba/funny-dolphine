@@ -4,12 +4,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.core.auth import authorize_user
 from src.db import get_async_session
 from src.repo.user_audiobook import UserAudiobookRepo
-from src.schemas.user_audiobook import UserAudiobookSchema
 
 router = APIRouter()
 
 
-@router.get("/{account_id}/{audiobook_id}/", response_model=list[UserAudiobookSchema])
+@router.get("/{account_id}/{audiobook_id}/")
 async def get_user_audiobook_info(
     request: Request,
     account_id: int,
