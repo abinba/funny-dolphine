@@ -1,4 +1,5 @@
 from collections import defaultdict
+from typing import Optional
 
 from fastapi import HTTPException
 from pydantic import ValidationError
@@ -69,6 +70,37 @@ class UserAudiobookRepo(BaseRepo):
         return cls.validation_schema.model_validate(result)
 
     @classmethod
+    async def set_listened_times(
+        cls,
+        session: AsyncSession,
+        account_id: int,
+        audiobook_id: int,
+        chapter_id: Optional[int],
+    ):
+        user_audiobook_info = await cls._get(
+            session,
+            account_id=account_id,
+            audiobook_id=audiobook_id,
+        )
+
+        if not chapter_id:
+            chapter_id = await cls.get_last_listened_chapter(
+                session, account_id, audiobook_id
+            )
+
+        if not user_audiobook_info:
+            await cls.create(
+                session,
+                account_id=account_id,
+                audiobook_id=audiobook_id,
+                last_listened_chapter_id=chapter_id,
+            )
+        else:
+            user_audiobook_info.last_listened_chapter_id = chapter_id
+
+        await session.commit()
+
+    @classmethod
     async def set_explored(
         cls,
         session: AsyncSession,
@@ -95,21 +127,13 @@ class UserAudiobookRepo(BaseRepo):
         if user_chapter.listened_times is not None:
             user_chapter.listened_times += 1
 
-        user_audiobook_info = await cls._get(
+        await session.commit()
+
+        await cls.set_listened_times(
             session,
             account_id=account_id,
             audiobook_id=audiobook_id,
+            chapter_id=chapter_id,
         )
 
-        if not user_audiobook_info:
-            await cls.create(
-                session,
-                account_id=account_id,
-                audiobook_id=audiobook_id,
-                last_listened_chapter_id=chapter_id,
-            )
-        else:
-            user_audiobook_info.last_listened_chapter_id = chapter_id
-
-        await session.commit()
         return user_chapter

@@ -18,6 +18,11 @@ async def get_user_audiobook_info(
 ):
     auth_header = request.headers.get("Authorization")
     authorize_user(auth_header)
+
+    await UserAudiobookRepo.set_listened_times(
+        session, account_id=account_id, audiobook_id=audiobook_id, chapter_id=None,
+    )
+
     return await UserAudiobookRepo.all(
         session, account_id=account_id, audiobook_id=audiobook_id
     )
