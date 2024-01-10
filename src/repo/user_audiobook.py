@@ -66,7 +66,7 @@ class UserAudiobookRepo(BaseRepo):
                 chapter_info["listened_times"] = 0
 
             result["chapters"].append(chapter_info)
-        print(result)
+
         return cls.validation_schema.model_validate(result)
 
     @classmethod
