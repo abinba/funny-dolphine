@@ -79,7 +79,6 @@ class ServiceAuthProvider(AuthProvider):
                 {"username": "Ensure username has at least 03 characters"}
             )
 
-        print(settings.admin_password)
         if username in users and self._authenticator.verify_password(
             password, settings.admin_password
         ):
