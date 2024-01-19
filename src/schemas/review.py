@@ -10,6 +10,6 @@ class ReviewSchema(SchemaBase):
 
     client_id: int
     audiobook_id: int
-    rating_value: Literal[1,2,3,4,5]
+    rating_value: Literal[1, 2, 3, 4, 5]
     rating_date: datetime
     review_content: str
