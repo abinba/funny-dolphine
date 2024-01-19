@@ -19,7 +19,10 @@ async def get_user_audiobook_info(
     authorize_user(auth_header)
 
     await UserAudiobookRepo.set_listened_times(
-        session, account_id=account_id, audiobook_id=audiobook_id, chapter_id=None,
+        session,
+        account_id=account_id,
+        audiobook_id=audiobook_id,
+        chapter_id=None,
     )
 
     return await UserAudiobookRepo.all(
