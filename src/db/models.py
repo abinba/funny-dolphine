@@ -21,6 +21,11 @@ class Account(BaseABC):
     username = sa.Column(sa.String, unique=True, index=True)
     is_active = sa.Column(sa.Boolean, default=True)
 
+    reviews = relationship(
+        "Review",
+        back_populates="account"
+    )
+
     def __str__(self):
         return self.username
 
@@ -65,6 +70,11 @@ class Audiobook(BaseABC):
     cover_image = sa.Column(sa.String(2048), nullable=False)
     listened_times = sa.Column(sa.Integer, default=0)
     rating = sa.Column(sa.Float, default=0)
+
+    reviews = relationship(
+        "Review",
+        back_populates="audiobook"
+    )
 
     def __str__(self):
         return f"{self.title} by {self.author}"
@@ -169,3 +179,26 @@ class Category(BaseABC):
 
     def __str__(self):
         return self.name
+
+class Review(BaseABC):
+    __tablename__ = "review"
+
+    account_id = sa.Column(sa.Integer, sa.ForeignKey("account.account_id"), primary_key=True)
+    account = relationship(
+        "Account",
+        back_populates="reviews"
+    )
+
+    audiobook_id = sa.Column(sa.Integer, sa.ForeignKey("audiobook.audiobook_id"), primary_key=True)
+    audiobook = relationship(
+        "Audiobook",
+        cascade="all, delete",
+        back_populates="reviews"
+    )
+
+    rating_value = sa.Column(sa.Integer, nullable=False)
+    rating_date = sa.Column(sa.TIMESTAMP, nullable=False)
+    review_content = sa.Column(sa.String)
+
+    def __str__(self):
+        return f"{self.account_id} {self.audiobook_id} {self.rating_value}"

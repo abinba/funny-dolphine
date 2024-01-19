@@ -13,6 +13,7 @@ from src.db.models import (
     Category,
     Chapter,
     UserAudiobook,
+    Review
 )
 from src.web.auth import ServiceAuthProvider
 
@@ -49,5 +50,6 @@ def setup_admin(app: FastAPI):
     admin.add_view(ModelView(Category, label="Categories"))
     admin.add_view(ModelView(Audiobook))
     admin.add_view(ModelView(UserAudiobook))
+    admin.add_view(ModelView(Review))
 
     admin.mount_to(app)

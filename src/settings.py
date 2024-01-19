@@ -33,7 +33,6 @@ class AppSettings(BaseSettings):
 
     jwt_secret_key: str
     admin_password: str
-
     api_key: str
 
     database: DatabaseSettings = DatabaseSettings(
