@@ -40,7 +40,7 @@ async def get_reviews_by_audiobook_id(
     authorize_user(auth_header)
     return await ReviewRepo.get(session, audiobook_id=audiobook_id)
 
-@router.post("/")
+@router.post("/", response_model=list[ReviewSchema])
 async def create_review(
         request: Request,
         client_id: int,
@@ -53,4 +53,5 @@ async def create_review(
     auth_header = request.headers.get("Authorization")
     authorize_user(auth_header)
     return await ReviewRepo.create(session, client_id=client_id, audiobook_id=audiobook_id, rating_value=rating_value, rating_date=rating_date, review_content=review_content)
+
 
