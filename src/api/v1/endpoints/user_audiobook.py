@@ -26,9 +26,7 @@ async def get_user_audiobook_info(
     )
 
     return await UserAudiobookRepo.all(
-        session,
-        account_id=account_id,
-        audiobook_id=audiobook_id
+        session, account_id=account_id, audiobook_id=audiobook_id
     )
 
 
@@ -43,9 +41,6 @@ async def set_explored(
     auth_header = request.headers.get("Authorization")
     authorize_user(auth_header)
     await UserAudiobookRepo.set_explored(
-        session,
-        account_id=account_id,
-        audiobook_id=audiobook_id,
-        chapter_id=chapter_id
+        session, account_id=account_id, audiobook_id=audiobook_id, chapter_id=chapter_id
     )
     return {"message": "success"}
