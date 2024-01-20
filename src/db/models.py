@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import sqlalchemy as sa
 from sqlalchemy.orm import relationship
 
@@ -7,8 +9,8 @@ from src.db import Base
 class BaseABC(Base):
     __abstract__ = True
 
-    created_at = sa.Column(sa.DateTime, default=sa.func.now())
-    updated_at = sa.Column(sa.DateTime, default=sa.func.now(), onupdate=sa.func.now())
+    created_at = sa.Column(sa.DateTime, default=datetime.now())
+    updated_at = sa.Column(sa.DateTime, default=datetime.now(), onupdate=datetime.now())
 
     def __repr__(self):
         return f"<{self.__class__.__name__} {self.__dict__}>"
