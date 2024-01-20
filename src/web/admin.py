@@ -13,6 +13,8 @@ from src.db.models import (
     Category,
     Chapter,
     UserAudiobook,
+    Review,
+    Listening
 )
 from src.web.auth import ServiceAuthProvider
 
@@ -38,7 +40,8 @@ def setup_admin(app: FastAPI):
         auth_provider=ServiceAuthProvider(),
         middlewares=[
             Middleware(
-                SessionMiddleware, secret_key=os.environ.get("SESSION_SECRET_KEY")
+                SessionMiddleware,
+                secret_key=os.environ.get("SESSION_SECRET_KEY")
             )
         ],
     )
@@ -49,5 +52,7 @@ def setup_admin(app: FastAPI):
     admin.add_view(ModelView(Category, label="Categories"))
     admin.add_view(ModelView(Audiobook))
     admin.add_view(ModelView(UserAudiobook))
+    admin.add_view(ModelView(Review))
+    admin.add_view(ModelView(Listening))
 
     admin.mount_to(app)
