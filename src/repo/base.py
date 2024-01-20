@@ -43,6 +43,7 @@ class BaseRepo:
     async def create(cls, session: AsyncSession, **kwargs):
         row = cls.model(**kwargs)
         session.add(row)
+        await session.commit()
         return row
 
     @classmethod
