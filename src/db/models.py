@@ -8,8 +8,7 @@ class BaseABC(Base):
     __abstract__ = True
 
     created_at = sa.Column(sa.DateTime, default=sa.func.now())
-    updated_at = sa.Column(sa.DateTime, default=sa.func.now(),
-                           onupdate=sa.func.now())
+    updated_at = sa.Column(sa.DateTime, default=sa.func.now(), onupdate=sa.func.now())
 
     def __repr__(self):
         return f"<{self.__class__.__name__} {self.__dict__}>"
@@ -22,15 +21,9 @@ class Account(BaseABC):
     username = sa.Column(sa.String, unique=True, index=True)
     is_active = sa.Column(sa.Boolean, default=True)
 
-    reviews = relationship(
-        "Review",
-        back_populates="account"
-    )
+    reviews = relationship("Review", back_populates="account")
 
-    listening = relationship(
-        "Listening",
-        back_populates="account"
-    )
+    listening = relationship("Listening", back_populates="account")
 
     def __str__(self):
         return self.username
@@ -77,15 +70,9 @@ class Audiobook(BaseABC):
     listened_times = sa.Column(sa.Integer, default=0)
     rating = sa.Column(sa.Float, default=0)
 
-    reviews = relationship(
-        "Review",
-        back_populates="audiobook"
-    )
+    reviews = relationship("Review", back_populates="audiobook")
 
-    listening = relationship(
-        "Listening",
-        back_populates="audiobook"
-    )
+    listening = relationship("Listening", back_populates="audiobook")
 
     def __str__(self):
         return f"{self.title} by {self.author}"
@@ -97,11 +84,8 @@ class Chapter(BaseABC):
     chapter_id = sa.Column(sa.Integer, primary_key=True, index=True)
     chapter_ordered_id = sa.Column(sa.String(100), nullable=False, index=True)
 
-    audiobook_id = sa.Column(sa.Integer,
-                             sa.ForeignKey("audiobook.audiobook_id"))
-    parent_id = sa.Column(sa.Integer,
-                          sa.ForeignKey("chapter.chapter_id"),
-                          default=None)
+    audiobook_id = sa.Column(sa.Integer, sa.ForeignKey("audiobook.audiobook_id"))
+    parent_id = sa.Column(sa.Integer, sa.ForeignKey("chapter.chapter_id"), default=None)
 
     sub_title = sa.Column(sa.String(120), nullable=False, index=True)
     full_text = sa.Column(sa.Text, nullable=True)
@@ -123,10 +107,7 @@ class Chapter(BaseABC):
     parent = relationship(
         "Chapter", back_populates="children", remote_side=[chapter_id]
     )
-    listening = relationship(
-        "Listening",
-        back_populates="current_chapter"
-    )
+    listening = relationship("Listening", back_populates="current_chapter")
 
     def __str__(self):
         return f"{self.chapter_id} {self.sub_title}"
@@ -162,8 +143,7 @@ class UserAudiobook(BaseABC):
 
     user_audiobook_id = sa.Column(sa.Integer, primary_key=True, index=True)
 
-    account_id = sa.Column(sa.Integer,
-                           sa.ForeignKey("account.account_id"))
+    account_id = sa.Column(sa.Integer, sa.ForeignKey("account.account_id"))
 
     account = relationship(
         "Account",
@@ -171,8 +151,7 @@ class UserAudiobook(BaseABC):
         single_parent=True,
     )
 
-    audiobook_id = sa.Column(sa.Integer,
-                             sa.ForeignKey("audiobook.audiobook_id"))
+    audiobook_id = sa.Column(sa.Integer, sa.ForeignKey("audiobook.audiobook_id"))
 
     audiobook = relationship(
         "Audiobook",
@@ -190,9 +169,11 @@ class UserAudiobook(BaseABC):
     )
 
     def __str__(self):
-        return f"{self.account_id}" \
-               f" - {self.audiobook_id}" \
-               f" - {self.last_listened_chapter}"
+        return (
+            f"{self.account_id}"
+            f" - {self.audiobook_id}"
+            f" - {self.last_listened_chapter}"
+        )
 
 
 class Category(BaseABC):
@@ -208,23 +189,18 @@ class Category(BaseABC):
 class Review(BaseABC):
     __tablename__ = "review"
 
-    account_id = sa.Column(sa.Integer,
-                           sa.ForeignKey("account.account_id"),
-                           primary_key=True)
-
-    account = relationship(
-        "Account",
-        back_populates="reviews"
+    account_id = sa.Column(
+        sa.Integer, sa.ForeignKey("account.account_id"), primary_key=True
     )
 
-    audiobook_id = sa.Column(sa.Integer,
-                             sa.ForeignKey("audiobook.audiobook_id"),
-                             primary_key=True)
+    account = relationship("Account", back_populates="reviews")
+
+    audiobook_id = sa.Column(
+        sa.Integer, sa.ForeignKey("audiobook.audiobook_id"), primary_key=True
+    )
 
     audiobook = relationship(
-        "Audiobook",
-        cascade="all, delete",
-        back_populates="reviews"
+        "Audiobook", cascade="all, delete", back_populates="reviews"
     )
 
     rating_value = sa.Column(sa.Integer, nullable=False)
@@ -238,33 +214,24 @@ class Review(BaseABC):
 class Listening(BaseABC):
     __tablename__ = "listening"
 
-    account_id = sa.Column(sa.Integer,
-                           sa.ForeignKey("account.account_id"),
-                           primary_key=True)
-
-    account = relationship(
-        "Account",
-        back_populates="listening",
-        cascade="all, delete"
+    account_id = sa.Column(
+        sa.Integer, sa.ForeignKey("account.account_id"), primary_key=True
     )
 
-    audiobook_id = sa.Column(sa.Integer,
-                             sa.ForeignKey("audiobook.audiobook_id"),
-                             primary_key=True)
+    account = relationship("Account", back_populates="listening", cascade="all, delete")
+
+    audiobook_id = sa.Column(
+        sa.Integer, sa.ForeignKey("audiobook.audiobook_id"), primary_key=True
+    )
 
     audiobook = relationship(
-        "Audiobook",
-        back_populates="listening",
-        cascade="all, delete"
+        "Audiobook", back_populates="listening", cascade="all, delete"
     )
 
-    current_chapter_id = sa.Column(sa.Integer,
-                                   sa.ForeignKey("chapter.chapter_id"))
+    current_chapter_id = sa.Column(sa.Integer, sa.ForeignKey("chapter.chapter_id"))
 
     current_chapter = relationship(
-        "Chapter",
-        back_populates="listening",
-        cascade="all, delete"
+        "Chapter", back_populates="listening", cascade="all, delete"
     )
 
     start_time = sa.Column(sa.TIMESTAMP, nullable=False)

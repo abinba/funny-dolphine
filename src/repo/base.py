@@ -36,8 +36,7 @@ class BaseRepo:
         query = select(cls.model)
         result = await session.scalars(query)
         if cls.validation_schema:
-            return [cls.validation_schema.model_validate(item)
-                    for item in result]
+            return [cls.validation_schema.model_validate(item) for item in result]
         return result
 
     @classmethod
