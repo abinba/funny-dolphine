@@ -118,7 +118,8 @@ class ListeningView(ModelView, model=Listening):
 
 def setup_admin(app: FastAPI):
     admin = Admin(
-        app, engine,
+        app,
+        engine,
     )
 
     admin.add_view(ChapterView)
