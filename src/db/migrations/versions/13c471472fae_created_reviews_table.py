@@ -27,9 +27,12 @@ def upgrade() -> None:
                     sa.Column('review_content', sa.String(), nullable=True),
                     sa.Column('created_at', sa.DateTime(), nullable=True),
                     sa.Column('updated_at', sa.DateTime(), nullable=True),
-                    sa.ForeignKeyConstraint(['account_id'], ['account.account_id'], ),
-                    sa.ForeignKeyConstraint(['audiobook_id'], ['audiobook.audiobook_id'], ),
-                    sa.PrimaryKeyConstraint('account_id', 'audiobook_id')
+                    sa.ForeignKeyConstraint(['account_id'],
+                                            ['account.account_id'], ),
+                    sa.ForeignKeyConstraint(['audiobook_id'],
+                                            ['audiobook.audiobook_id'], ),
+                    sa.PrimaryKeyConstraint('account_id',
+                                            'audiobook_id')
                     )
     # ### end Alembic commands ###
 

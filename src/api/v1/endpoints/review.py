@@ -8,8 +8,8 @@ from src.schemas.review import ReviewSchema
 from datetime import datetime
 from typing import Literal
 
-
 router = APIRouter()
+
 
 @router.get("/", response_model=list[ReviewSchema])
 async def get_reviews(
@@ -20,15 +20,17 @@ async def get_reviews(
     authorize_user(auth_header)
     return await ReviewRepo.all(session)
 
+
 @router.get("/account/{account_id}", response_model=list[ReviewSchema])
 async def get_reviews_by_account_id(
-    request: Request,
-    account_id: int,
-    session: AsyncSession = Depends(get_async_session),
+        request: Request,
+        account_id: int,
+        session: AsyncSession = Depends(get_async_session),
 ):
     auth_header = request.headers.get("Authorization")
     authorize_user(auth_header)
     return await ReviewRepo.get(session, account_id=account_id)
+
 
 @router.get("/audiobook/{audiobook_id}", response_model=list[ReviewSchema])
 async def get_reviews_by_audiobook_id(
@@ -39,6 +41,7 @@ async def get_reviews_by_audiobook_id(
     auth_header = request.headers.get("Authorization")
     authorize_user(auth_header)
     return await ReviewRepo.get(session, audiobook_id=audiobook_id)
+
 
 @router.post("/", response_model=list[ReviewSchema])
 async def create_review(
@@ -52,6 +55,9 @@ async def create_review(
 ):
     auth_header = request.headers.get("Authorization")
     authorize_user(auth_header)
-    return await ReviewRepo.create(session, client_id=client_id, audiobook_id=audiobook_id, rating_value=rating_value, rating_date=rating_date, review_content=review_content)
-
-
+    return await ReviewRepo.create(session,
+                                   client_id=client_id,
+                                   audiobook_id=audiobook_id,
+                                   rating_value=rating_value,
+                                   rating_date=rating_date,
+                                   review_content=review_content)

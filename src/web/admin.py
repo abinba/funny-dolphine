@@ -40,7 +40,8 @@ def setup_admin(app: FastAPI):
         auth_provider=ServiceAuthProvider(),
         middlewares=[
             Middleware(
-                SessionMiddleware, secret_key=os.environ.get("SESSION_SECRET_KEY")
+                SessionMiddleware,
+                secret_key=os.environ.get("SESSION_SECRET_KEY")
             )
         ],
     )

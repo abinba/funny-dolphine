@@ -28,7 +28,9 @@ async def get_listening_by_account_id_and_audiobook_id(
 ):
     auth_header = request.headers.get("Authorization")
     authorize_user(auth_header)
-    return await ListeningRepo.get(session, account_id=account_id, audiobook_id=audiobook_id)
+    return await ListeningRepo.get(session,
+                                   account_id=account_id,
+                                   audiobook_id=audiobook_id)
 
 
 @router.post("/", response_model=list[ListeningSchema])
@@ -45,7 +47,11 @@ async def create_review(
 ):
     auth_header = request.headers.get("Authorization")
     authorize_user(auth_header)
-    return await ListeningRepo.create(session, client_id=client_id, audiobook_id=audiobook_id,
-                                      current_chapter_id=current_chapter_id, start_time=start_time,
-                                      last_access_time=last_access_time, finish_time=finish_time,
+    return await ListeningRepo.create(session,
+                                      client_id=client_id,
+                                      audiobook_id=audiobook_id,
+                                      current_chapter_id=current_chapter_id,
+                                      start_time=start_time,
+                                      last_access_time=last_access_time,
+                                      finish_time=finish_time,
                                       is_favorite=is_favorite)

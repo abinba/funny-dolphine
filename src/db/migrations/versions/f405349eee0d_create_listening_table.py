@@ -22,17 +22,25 @@ def upgrade() -> None:
     op.create_table('listening',
                     sa.Column('account_id', sa.Integer(), nullable=False),
                     sa.Column('audiobook_id', sa.Integer(), nullable=False),
-                    sa.Column('current_chapter_id', sa.Integer(), nullable=True),
+                    sa.Column('current_chapter_id',
+                              sa.Integer(),
+                              nullable=True),
                     sa.Column('start_time', sa.TIMESTAMP(), nullable=False),
-                    sa.Column('last_access_time', sa.TIMESTAMP(), nullable=False),
+                    sa.Column('last_access_time',
+                              sa.TIMESTAMP(),
+                              nullable=False),
                     sa.Column('finish_time', sa.TIMESTAMP(), nullable=True),
                     sa.Column('is_favorite', sa.Boolean(), nullable=False),
                     sa.Column('created_at', sa.DateTime(), nullable=True),
                     sa.Column('updated_at', sa.DateTime(), nullable=True),
-                    sa.ForeignKeyConstraint(['account_id'], ['account.account_id'], ),
-                    sa.ForeignKeyConstraint(['audiobook_id'], ['audiobook.audiobook_id'], ),
-                    sa.ForeignKeyConstraint(['current_chapter_id'], ['chapter.chapter_id'], ),
-                    sa.PrimaryKeyConstraint('account_id', 'audiobook_id')
+                    sa.ForeignKeyConstraint(['account_id'],
+                                            ['account.account_id'], ),
+                    sa.ForeignKeyConstraint(['audiobook_id'],
+                                            ['audiobook.audiobook_id'], ),
+                    sa.ForeignKeyConstraint(['current_chapter_id'],
+                                            ['chapter.chapter_id'], ),
+                    sa.PrimaryKeyConstraint('account_id',
+                                            'audiobook_id')
                     )
     # ### end Alembic commands ###
 

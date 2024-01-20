@@ -6,4 +6,3 @@ from src.schemas.review import ReviewSchema
 class ReviewRepo(BaseRepo):
     model = Review
     validation_schema = ReviewSchema
-          
