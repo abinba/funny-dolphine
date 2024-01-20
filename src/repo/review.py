@@ -10,11 +10,7 @@ class ReviewRepo(BaseRepo):
     validation_schema = ReviewSchema
 
     @classmethod
-    async def get_by_attribute(
-            cls,
-            session: AsyncSession,
-            **kwargs
-    ):
+    async def get_by_attribute(cls, session: AsyncSession, **kwargs):
         query = select(cls.model).filter_by(**kwargs)
         result = await session.scalars(query)
         if cls.validation_schema:

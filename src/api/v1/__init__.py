@@ -22,6 +22,4 @@ v1_router.include_router(
 v1_router.include_router(
     user_audiobook.router, prefix="/user_audiobook", tags=["user_audiobook"]
 )
-v1_router.include_router(
-    review.router, prefix="/reviews", tags=["reviews"]
-)
+v1_router.include_router(review.router, prefix="/reviews", tags=["reviews"])

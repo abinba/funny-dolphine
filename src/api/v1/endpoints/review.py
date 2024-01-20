@@ -8,7 +8,6 @@ from src.schemas.review import ReviewSchema
 from datetime import datetime
 from src.repo.account import AccountRepo
 from src.repo.audiobook import AudiobookRepo
-from typing import Literal
 
 router = APIRouter()
 
@@ -62,13 +61,22 @@ async def create_review(
     updated_at = datetime.now()
 
     if not await AccountRepo.exists(session, account_id=account_id):
-        raise HTTPException(status_code=404, detail=f'No account with ip {account_id} was found!')
+        raise HTTPException(
+            status_code=404, detail=f"No account with ip {account_id} was found!"
+        )
 
     if not await AudiobookRepo.exists(session, audiobook_id=audiobook_id):
-        raise HTTPException(status_code=404, detail=f'No audiobook with ip {audiobook_id} was found!')
+        raise HTTPException(
+            status_code=404, detail=f"No audiobook with ip {audiobook_id} was found!"
+        )
 
-    if await ReviewRepo.exists(session, account_id=account_id, audiobook_id=audiobook_id):
-        raise HTTPException(status_code=409, detail=f'User with id {account_id} has already reviewed audiobook with id {audiobook_id}')
+    if await ReviewRepo.exists(
+        session, account_id=account_id, audiobook_id=audiobook_id
+    ):
+        raise HTTPException(
+            status_code=409,
+            detail=f"User with id {account_id} has already reviewed audiobook with id {audiobook_id}",
+        )
 
     review = await ReviewRepo.create(
         session,
@@ -78,7 +86,7 @@ async def create_review(
         rating_date=rating_date.replace(tzinfo=None),
         review_content=review_content,
         created_at=created_at,
-        updated_at=updated_at
+        updated_at=updated_at,
     )
 
     return review

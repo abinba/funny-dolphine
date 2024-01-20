@@ -1,6 +1,5 @@
 from pydantic import ConfigDict
 from datetime import datetime
-from typing import Literal
 
 from src.schemas.base import SchemaBase
 
