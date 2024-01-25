@@ -27,9 +27,7 @@ class Account(BaseABC):
 
     listening = relationship("Listening", back_populates="account")
 
-    loginMethods = relationship(
-        "LoginMethod", back_populates="account"
-    )
+    loginMethods = relationship("LoginMethod", back_populates="account")
 
     def __str__(self):
         return self.username
@@ -264,8 +262,8 @@ class LoginMethod(BaseABC):
 class Salt(BaseABC):
     __tablename__ = "salt"
 
-    account_id = sa.Column(sa.Integer, sa.ForeignKey("account.account_id"), primary_key=True)
+    account_id = sa.Column(
+        sa.Integer, sa.ForeignKey("account.account_id"), primary_key=True
+    )
 
     salt = sa.Column(sa.String, nullable=False)
-
-
