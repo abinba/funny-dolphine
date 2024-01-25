@@ -8,6 +8,7 @@ from .endpoints import (
     chapter,
     user_audiobook,
     review,
+    login_method
 )
 
 v1_router = APIRouter()
@@ -23,3 +24,4 @@ v1_router.include_router(
     user_audiobook.router, prefix="/user_audiobook", tags=["user_audiobook"]
 )
 v1_router.include_router(review.router, prefix="/reviews", tags=["reviews"])
+v1_router.include_router(login_method.router, prefix="/loginMethods", tags=["loginMethods"])
