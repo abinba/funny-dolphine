@@ -9,3 +9,10 @@ class AccountSchema(SchemaBase):
     account_id: int
     username: str
     is_active: bool
+
+
+class AccountSchemaWithoutId(SchemaBase):
+    model_config = ConfigDict(from_attributes=True)
+
+    username: str
+    is_active: bool

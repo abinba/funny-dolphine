@@ -27,6 +27,8 @@ class Account(BaseABC):
 
     listening = relationship("Listening", back_populates="account")
 
+    loginMethods = relationship("LoginMethod", back_populates="account")
+
     def __str__(self):
         return self.username
 
@@ -240,3 +242,28 @@ class Listening(BaseABC):
     last_access_time = sa.Column(sa.TIMESTAMP, nullable=False)
     finish_time = sa.Column(sa.TIMESTAMP, default=sa.Null)
     is_favorite = sa.Column(sa.Boolean, nullable=False, default=False)
+
+
+class LoginMethod(BaseABC):
+    __tablename__ = "loginMethod"
+
+    account_id = sa.Column(
+        sa.Integer, sa.ForeignKey("account.account_id"), primary_key=True
+    )
+
+    login_email = sa.Column(sa.String, nullable=False, unique=True)
+    login_password = sa.Column(sa.String, nullable=False)
+
+    account = relationship(
+        "Account", back_populates="loginMethods", cascade="all, delete"
+    )
+
+
+class Salt(BaseABC):
+    __tablename__ = "salt"
+
+    account_id = sa.Column(
+        sa.Integer, sa.ForeignKey("account.account_id"), primary_key=True
+    )
+
+    salt = sa.Column(sa.String, nullable=False)
