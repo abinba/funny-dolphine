@@ -49,7 +49,8 @@ async def login(
     )
 
     if login_method_db.login_password == test_password.decode("utf-8"):
-        return {"message": "success"}
+        account = await AccountRepo.get(session, account_id=login_method_db.account_id)
+        return {"message": "success", "account": account}
     else:
         return {"message": "fail"}
 
