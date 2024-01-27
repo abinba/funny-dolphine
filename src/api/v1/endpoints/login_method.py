@@ -1,10 +1,6 @@
-import os
-from base64 import b64encode
-
 import bcrypt
 from fastapi import APIRouter, Depends, Request, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from datetime import datetime
 from src.core.auth import authorize_user
 from src.db import get_async_session
 from src.repo.account import AccountRepo, AccountRepoWithoutId
