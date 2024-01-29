@@ -8,9 +8,9 @@ from src.db.models import (
     Account,
     Category,
     Chapter,
-    UserAudiobook,
     Review,
     Listening,
+    UserShelf,
 )
 
 
@@ -74,19 +74,9 @@ class AudiobookView(ModelView, model=Audiobook):
         Audiobook.cover_image,
         Audiobook.listened_times,
         Audiobook.rating,
+        Audiobook.first_chapter_id,
         Audiobook.created_at,
         Audiobook.updated_at,
-    ]
-
-
-class UserAudiobookView(ModelView, model=UserAudiobook):
-    column_list = [
-        UserAudiobook.user_audiobook_id,
-        UserAudiobook.account_id,
-        UserAudiobook.audiobook_id,
-        UserAudiobook.last_listened_chapter_id,
-        UserAudiobook.created_at,
-        UserAudiobook.updated_at,
     ]
 
 
@@ -107,12 +97,19 @@ class ListeningView(ModelView, model=Listening):
         Listening.account_id,
         Listening.audiobook_id,
         Listening.current_chapter_id,
-        Listening.start_time,
-        Listening.last_access_time,
-        Listening.finish_time,
-        Listening.is_favorite,
         Listening.created_at,
         Listening.updated_at,
+    ]
+
+
+class UserShelfView(ModelView, model=UserShelf):
+    column_list = [
+        UserShelf.account_id,
+        UserShelf.audiobook_id,
+        UserShelf.is_active,
+        UserShelf.archived,
+        UserShelf.created_at,
+        UserShelf.updated_at,
     ]
 
 
@@ -127,6 +124,6 @@ def setup_admin(app: FastAPI):
     admin.add_view(UserSettingsView)
     admin.add_view(CategoryView)
     admin.add_view(AudiobookView)
-    admin.add_view(UserAudiobookView)
     admin.add_view(ReviewView)
     admin.add_view(ListeningView)
+    admin.add_view(UserShelfView)

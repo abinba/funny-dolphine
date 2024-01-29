@@ -1,25 +1,17 @@
+from datetime import datetime
+
 from fastapi import APIRouter, Depends, Request
-from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException
-from src.core.auth import authorize_user
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from src.core.auth import is_authenticated, is_authorized
 from src.db import get_async_session
 from src.repo.review import ReviewRepo
 from src.schemas.review import ReviewSchema
-from datetime import datetime
 from src.repo.account import AccountRepo
 from src.repo.audiobook import AudiobookRepo
 
 router = APIRouter()
-
-
-@router.get("/", response_model=list[ReviewSchema])
-async def get_reviews(
-    request: Request,
-    session: AsyncSession = Depends(get_async_session),
-):
-    auth_header = request.headers.get("Authorization")
-    authorize_user(auth_header)
-    return await ReviewRepo.all(session)
 
 
 @router.get("/account/{account_id}", response_model=list[ReviewSchema])
@@ -28,8 +20,8 @@ async def get_reviews_by_account_id(
     account_id: int,
     session: AsyncSession = Depends(get_async_session),
 ):
-    auth_header = request.headers.get("Authorization")
-    authorize_user(auth_header)
+    payload = is_authenticated(request.headers.get("Authorization"))
+    is_authorized(payload, account_id)
     return await ReviewRepo.get_by_attribute(session, account_id=account_id)
 
 
@@ -39,8 +31,7 @@ async def get_reviews_by_audiobook_id(
     audiobook_id: int,
     session: AsyncSession = Depends(get_async_session),
 ):
-    auth_header = request.headers.get("Authorization")
-    authorize_user(auth_header)
+    is_authenticated(request.headers.get("Authorization"))
     return await ReviewRepo.get_by_attribute(session, audiobook_id=audiobook_id)
 
 
@@ -54,8 +45,8 @@ async def create_review(
     review_content: str,
     session: AsyncSession = Depends(get_async_session),
 ):
-    auth_header = request.headers.get("Authorization")
-    authorize_user(auth_header)
+    payload = is_authenticated(request.headers.get("Authorization"))
+    is_authorized(payload, account_id)
 
     created_at = datetime.now()
     updated_at = datetime.now()

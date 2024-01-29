@@ -26,3 +26,6 @@ jobs:
 
       - name: Code Quality
         run: poetry run black . --check && poetry run flake8
+
+      - name: Unit Tests
+        run: pytest -vv --cov-report term-missing --cov-branch --cov=src

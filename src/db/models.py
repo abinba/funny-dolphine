@@ -24,10 +24,9 @@ class Account(BaseABC):
     is_active = sa.Column(sa.Boolean, default=True)
 
     reviews = relationship("Review", back_populates="account")
-
     listening = relationship("Listening", back_populates="account")
-
     loginMethods = relationship("LoginMethod", back_populates="account")
+    user_shelf = relationship("UserShelf", back_populates="account")
 
     def __str__(self):
         return self.username
@@ -74,6 +73,11 @@ class Audiobook(BaseABC):
     listened_times = sa.Column(sa.Integer, default=0)
     rating = sa.Column(sa.Float, default=0)
 
+    first_chapter_id = sa.Column(
+        sa.Integer, sa.ForeignKey("chapter.chapter_id"), nullable=True, default=None
+    )
+    first_chapter = relationship("Chapter", foreign_keys="Audiobook.first_chapter_id")
+
     reviews = relationship("Review", back_populates="audiobook")
 
     listening = relationship("Listening", back_populates="audiobook")
@@ -98,8 +102,8 @@ class Chapter(BaseABC):
 
     audiobook = relationship(
         "Audiobook",
-        backref="chapters",
         cascade="all, delete",
+        foreign_keys="Chapter.audiobook_id",
         single_parent=True,
     )
     children = relationship(
@@ -111,73 +115,9 @@ class Chapter(BaseABC):
     parent = relationship(
         "Chapter", back_populates="children", remote_side=[chapter_id]
     )
-    listening = relationship("Listening", back_populates="current_chapter")
 
     def __str__(self):
         return f"{self.chapter_id} {self.sub_title}"
-
-
-class UserChapter(BaseABC):
-    __tablename__ = "user_chapter"
-
-    user_chapter_id = sa.Column(sa.Integer, primary_key=True, index=True)
-
-    account_id = sa.Column(sa.Integer, sa.ForeignKey("account.account_id"))
-    account = relationship(
-        "Account",
-        cascade="all, delete-orphan",
-        single_parent=True,
-    )
-
-    chapter_id = sa.Column(sa.Integer, sa.ForeignKey("chapter.chapter_id"))
-    chapter = relationship(
-        "Chapter",
-        cascade="all, delete-orphan",
-        single_parent=True,
-    )
-
-    listened_times = sa.Column(sa.Integer, default=1)
-
-    def __str__(self):
-        return f"{self.account_id} - {self.chapter_id}"
-
-
-class UserAudiobook(BaseABC):
-    __tablename__ = "user_audiobook"
-
-    user_audiobook_id = sa.Column(sa.Integer, primary_key=True, index=True)
-
-    account_id = sa.Column(sa.Integer, sa.ForeignKey("account.account_id"))
-
-    account = relationship(
-        "Account",
-        cascade="all, delete-orphan",
-        single_parent=True,
-    )
-
-    audiobook_id = sa.Column(sa.Integer, sa.ForeignKey("audiobook.audiobook_id"))
-
-    audiobook = relationship(
-        "Audiobook",
-        cascade="all, delete-orphan",
-        single_parent=True,
-    )
-
-    last_listened_chapter_id = sa.Column(
-        sa.Integer, sa.ForeignKey("chapter.chapter_id")
-    )
-    last_listened_chapter = relationship(
-        "Chapter",
-        cascade="all, delete-orphan",
-        single_parent=True,
-    )
-
-    def __str__(self):
-        return (
-            f"{self.account_id}"
-            f" - {self.audiobook_id}"
-            f" - {self.last_listened_chapter}"
-        )
 
 
 class Category(BaseABC):
@@ -215,6 +155,27 @@ class Review(BaseABC):
         return f"{self.account_id} {self.audiobook_id} {self.rating_value}"
 
 
+class UserShelf(BaseABC):
+    __tablename__ = "user_shelf"
+
+    account_id = sa.Column(
+        sa.Integer, sa.ForeignKey("account.account_id"), primary_key=True
+    )
+
+    account = relationship("Account", back_populates="user_shelf")
+
+    audiobook_id = sa.Column(
+        sa.Integer, sa.ForeignKey("audiobook.audiobook_id"), primary_key=True
+    )
+
+    audiobook = relationship(
+        "Audiobook",
+    )
+
+    archived = sa.Column(sa.Boolean, nullable=False, default=False)
+    is_active = sa.Column(sa.Boolean, nullable=False, default=True)
+
+
 class Listening(BaseABC):
     __tablename__ = "listening"
 
@@ -234,14 +195,7 @@ class Listening(BaseABC):
 
     current_chapter_id = sa.Column(sa.Integer, sa.ForeignKey("chapter.chapter_id"))
 
-    current_chapter = relationship(
-        "Chapter", back_populates="listening", cascade="all, delete"
-    )
-
-    start_time = sa.Column(sa.TIMESTAMP, nullable=False)
-    last_access_time = sa.Column(sa.TIMESTAMP, nullable=False)
-    finish_time = sa.Column(sa.TIMESTAMP, default=sa.Null)
-    is_favorite = sa.Column(sa.Boolean, nullable=False, default=False)
+    current_chapter = relationship("Chapter", cascade="all, delete")
 
 
 class LoginMethod(BaseABC):

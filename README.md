@@ -115,3 +115,32 @@ $ uvicorn main:app --reload
 ```bash
 $ docker-compose up --build
 ```
+
+
+## Database management
+
+You would need to create following Database trigger:
+
+```sql
+-- Create a function to update first_chapter_id in Audiobook
+CREATE OR REPLACE FUNCTION update_first_chapter_id()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Check if first_chapter_id is NULL in Audiobook
+    IF NEW.audiobook_id IS NOT NULL AND NEW.parent_id IS NULL THEN
+        UPDATE audiobook
+        SET first_chapter_id = NEW.chapter_id
+        WHERE audiobook_id = NEW.audiobook_id;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Create a trigger to call the function before insert on Chapter
+CREATE TRIGGER before_insert_chapter_trigger
+AFTER INSERT ON chapter
+FOR EACH ROW
+EXECUTE FUNCTION update_first_chapter_id();
+```
+
+This will change in the future to be done automatically by alembic.
