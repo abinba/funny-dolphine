@@ -28,4 +28,4 @@ jobs:
         run: poetry run black . --check && poetry run flake8
 
       - name: Unit Tests
-        run: pytest -vv --cov-report term-missing --cov-branch --cov=src
+        run: poetry run pytest -vv --cov-report term-missing --cov-branch --cov=src
