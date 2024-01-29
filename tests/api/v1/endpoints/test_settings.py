@@ -25,7 +25,9 @@ def mock_settings():
 @patch("src.api.v1.endpoints.settings.is_authenticated")
 @patch("src.api.v1.endpoints.settings.is_authorized")
 @patch("src.repo.user_settings.UserSettingsRepo.get")
-def test_get_settings(mock_get, mock_is_authorized, mock_is_authenticated, mock_settings):
+def test_get_settings(
+    mock_get, mock_is_authorized, mock_is_authenticated, mock_settings
+):
     mock_is_authenticated.return_value = {"sub": {"account_id": "1"}}
     mock_is_authorized.return_value = None
     mock_get.return_value = mock_settings

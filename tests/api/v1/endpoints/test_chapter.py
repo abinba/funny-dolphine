@@ -17,9 +17,7 @@ def mock_chapters():
             "full_text": "1313132",
             "duration": 30,
             "audio_file_url": "https://google.com",
-            "children_ids": [
-                4
-            ]
+            "children_ids": [4],
         },
         {
             "chapter_id": 4,
@@ -30,15 +28,17 @@ def mock_chapters():
             "full_text": "asdad",
             "duration": 200,
             "audio_file_url": "audio/sherlock_1.mp3",
-            "children_ids": []
-        }
+            "children_ids": [],
+        },
     ]
 
 
 @patch("src.core.auth.authenticator")
 @patch("src.repo.chapter.ChapterRepo.all")
 def test_get_chapters(mock_all, authenticator_mock, mock_chapters):
-    authenticator_mock.validate_token_payload.return_value = {"sub": {"account_id": "1"}}
+    authenticator_mock.validate_token_payload.return_value = {
+        "sub": {"account_id": "1"}
+    }
     mock_all.return_value = mock_chapters
 
     client = TestClient(app)

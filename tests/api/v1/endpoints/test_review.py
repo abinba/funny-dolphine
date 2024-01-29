@@ -21,7 +21,9 @@ def mock_review():
 @patch("src.api.v1.endpoints.review.is_authenticated")
 @patch("src.api.v1.endpoints.review.is_authorized")
 @patch("src.repo.review.ReviewRepo.get_by_attribute")
-def test_get_reviews_by_account_id(mock_get_by_attribute, mock_is_authorized, mock_is_authenticated, mock_review):
+def test_get_reviews_by_account_id(
+    mock_get_by_attribute, mock_is_authorized, mock_is_authenticated, mock_review
+):
     mock_is_authenticated.return_value = None
     mock_is_authorized.return_value = None
     mock_get_by_attribute.return_value = [mock_review]
@@ -36,7 +38,9 @@ def test_get_reviews_by_account_id(mock_get_by_attribute, mock_is_authorized, mo
 
 @patch("src.api.v1.endpoints.review.is_authenticated")
 @patch("src.repo.review.ReviewRepo.get_by_attribute")
-def test_get_reviews_by_audiobook_id(mock_get_by_attribute, mock_is_authenticated, mock_review):
+def test_get_reviews_by_audiobook_id(
+    mock_get_by_attribute, mock_is_authenticated, mock_review
+):
     mock_is_authenticated.return_value = None
     mock_get_by_attribute.return_value = [mock_review]
 
@@ -54,7 +58,15 @@ def test_get_reviews_by_audiobook_id(mock_get_by_attribute, mock_is_authenticate
 @patch("src.repo.audiobook.AudiobookRepo.exists")
 @patch("src.repo.review.ReviewRepo.exists")
 @patch("src.repo.review.ReviewRepo.create")
-def test_create_review(mock_create, mock_exists_review, mock_exists_audiobook, mock_exists_account, mock_is_authorized, mock_is_authenticated, mock_review):
+def test_create_review(
+    mock_create,
+    mock_exists_review,
+    mock_exists_audiobook,
+    mock_exists_account,
+    mock_is_authorized,
+    mock_is_authenticated,
+    mock_review,
+):
     mock_is_authenticated.return_value = None
     mock_is_authorized.return_value = None
     mock_exists_account.return_value = True

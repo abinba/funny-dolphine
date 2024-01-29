@@ -36,13 +36,18 @@ def mock_audiobook():
 
 @patch("src.core.auth.authenticator")
 @patch("src.repo.listening.ListeningRepo.get")
-def test_get_listening_by_account_id_and_audiobook_id(mock_get, authenticator_mock, mock_listening):
-    authenticator_mock.validated_token_payload.return_value = {"sub": {"account_id": "1"}}
+def test_get_listening_by_account_id_and_audiobook_id(
+    mock_get, authenticator_mock, mock_listening
+):
+    authenticator_mock.validated_token_payload.return_value = {
+        "sub": {"account_id": "1"}
+    }
     mock_get.return_value = mock_listening
 
     client = TestClient(app)
     response = client.get(
-        "/api/v1/listening?account_id=1&audiobook_id=1", headers={"Authorization": "Bearer test_api_key"}
+        "/api/v1/listening?account_id=1&audiobook_id=1",
+        headers={"Authorization": "Bearer test_api_key"},
     )
     assert response.status_code == 200
     assert response.json() == mock_listening
@@ -51,14 +56,19 @@ def test_get_listening_by_account_id_and_audiobook_id(mock_get, authenticator_mo
 @patch("src.core.auth.authenticator")
 @patch("src.repo.audiobook.AudiobookRepo.get")
 @patch("src.repo.listening.ListeningRepo.create")
-def test_create_listening(mock_create, mock_get, authenticator_mock, mock_audiobook, mock_listening):
-    authenticator_mock.validated_token_payload.return_value = {"sub": {"account_id": "1"}}
+def test_create_listening(
+    mock_create, mock_get, authenticator_mock, mock_audiobook, mock_listening
+):
+    authenticator_mock.validated_token_payload.return_value = {
+        "sub": {"account_id": "1"}
+    }
     mock_get.return_value = MockAudiobook(**mock_audiobook)
     mock_create.return_value = mock_listening
 
     client = TestClient(app)
     response = client.post(
-        "/api/v1/listening?account_id=1&audiobook_id=1", headers={"Authorization": "Bearer test_api_key"}
+        "/api/v1/listening?account_id=1&audiobook_id=1",
+        headers={"Authorization": "Bearer test_api_key"},
     )
     assert response.status_code == 200
     assert response.json() == mock_listening
@@ -67,12 +77,15 @@ def test_create_listening(mock_create, mock_get, authenticator_mock, mock_audiob
 @patch("src.core.auth.authenticator")
 @patch("src.repo.listening.ListeningRepo.update_chapter")
 def test_update_chapter(mock_update_chapter, authenticator_mock, mock_listening):
-    authenticator_mock.validated_token_payload.return_value = {"sub": {"account_id": "1"}}
+    authenticator_mock.validated_token_payload.return_value = {
+        "sub": {"account_id": "1"}
+    }
     mock_update_chapter.return_value = mock_listening
 
     client = TestClient(app)
     response = client.put(
-        "/api/v1/listening?account_id=1&audiobook_id=1&current_chapter_id=1", headers={"Authorization": "Bearer test_api_key"}
+        "/api/v1/listening?account_id=1&audiobook_id=1&current_chapter_id=1",
+        headers={"Authorization": "Bearer test_api_key"},
     )
     assert response.status_code == 200
     assert response.json() == mock_listening
