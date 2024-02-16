@@ -1,2 +1,2 @@
-MISSING_API_KEY_ERROR = "Missing API key"
-INVALID_API_KEY_ERROR = "Invalid API key"
+MISSING_JWT_TOKEN_ERROR = "Missing JWT Token"
+INVALID_JWT_TOKEN_ERROR = "Invalid JWT Token"

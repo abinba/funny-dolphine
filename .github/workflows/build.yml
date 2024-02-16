@@ -26,3 +26,12 @@ jobs:
 
       - name: Code Quality
         run: poetry run black . --check && poetry run flake8
+
+      - name: Unit Tests
+        run: |
+          export POSTGRES_PASSWORD=dummy
+          export POSTGRES_USER=dummy
+          export JWT_SECRET_KEY=dummy
+          export ADMIN_PASSWORD=dummy
+          export API_KEY=dummy
+          poetry run pytest -vv --cov-report term-missing --cov-branch --cov=src
