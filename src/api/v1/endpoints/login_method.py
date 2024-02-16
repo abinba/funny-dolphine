@@ -1,35 +1,73 @@
+from typing import Annotated
+
 import bcrypt
-from fastapi import APIRouter, Depends, Request, HTTPException
+from fastapi import APIRouter, Depends, Request, HTTPException, Query
+from pydantic import EmailStr, BaseModel, field_validator
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.core.auth import authorize_user
+from src.core.auth import Authenticator
 from src.db import get_async_session
 from src.repo.account import AccountRepo, AccountRepoWithoutId
 from src.repo.login_method import LoginMethodRepo
 from src.repo.salt import SaltRepo
-from src.schemas.login_method import LoginMethodSchema
+from src.repo.user_settings import UserSettingsRepo
 
 router = APIRouter()
 
 
-@router.get("/", response_model=list[LoginMethodSchema])
-async def get_login_method(
-    request: Request,
-    session: AsyncSession = Depends(get_async_session),
-):
-    auth_header = request.headers.get("Authorization")
-    authorize_user(auth_header)
-    return await LoginMethodRepo.all(session)
+class LoginUserCredentials(BaseModel):
+    email: EmailStr
+    password: Annotated[str, Query(min_length=8, max_length=60)]
 
 
-@router.get("/login")
+class RegisterUserCredentials(LoginUserCredentials):
+    username: Annotated[str, Query(min_length=3, max_length=35)]
+
+    @field_validator("username")
+    @classmethod
+    def username_isalnum(cls, v):
+        if not v.isalnum():
+            raise ValueError(
+                "Username must not contain special characters, spaces nor symbols."
+            )
+        return v
+
+    @field_validator("password")
+    @classmethod
+    def login_password_contains_special_characters(cls, v):
+        if not any(char in "!@#$%^&*()-_=+[]{};:,./<>?`~" for char in v):
+            raise ValueError("Password must contain at least one special character.")
+        return v
+
+    @field_validator("password")
+    @classmethod
+    def login_password_contains_number(cls, v):
+        if not any(char.isdigit() for char in v):
+            raise ValueError("Password must contain at least one number.")
+        return v
+
+    @field_validator("password")
+    @classmethod
+    def login_password_contains_uppercase(cls, v):
+        if not any(char.isupper() for char in v):
+            raise ValueError("Password must contain at least one uppercase letter.")
+        return v
+
+    @field_validator("password")
+    @classmethod
+    def login_password_contains_lowercase(cls, v):
+        if not any(char.islower() for char in v):
+            raise ValueError("Password must contain at least one lowercase letter.")
+        return v
+
+
+@router.post("/login")
 async def login(
-    request: Request,
-    login_email: str,
-    login_password: str,
+    request: Request,  # noqa
+    user_credentials: LoginUserCredentials,
     session: AsyncSession = Depends(get_async_session),
 ):
-    # auth_header = request.headers.get("Authorization")
-    # authorize_user(auth_header)
+    login_email = user_credentials.email
+    login_password = user_credentials.password
 
     if not await LoginMethodRepo.exists(session, login_email=login_email):
         raise HTTPException(
@@ -46,21 +84,24 @@ async def login(
 
     if login_method_db.login_password == test_password.decode("utf-8"):
         account = await AccountRepo.get(session, account_id=login_method_db.account_id)
-        return {"message": "success", "account": account}
+        return {
+            "message": "success",
+            "account": account,
+            "token": Authenticator().create_access_token(account.account_id),
+        }
     else:
         return {"message": "fail"}
 
 
-@router.post("/", response_model=LoginMethodSchema)
+@router.post("/")
 async def register(
-    request: Request,
-    username: str,
-    login_email: str,
-    login_password: str,
+    request: Request,  # noqa
+    user_credentials: RegisterUserCredentials,
     session: AsyncSession = Depends(get_async_session),
 ):
-    auth_header = request.headers.get("Authorization")
-    authorize_user(auth_header)
+    username = user_credentials.username
+    login_email = user_credentials.email
+    login_password = user_credentials.password
 
     if await LoginMethodRepo.exists(session, login_email=login_email):
         raise HTTPException(
@@ -86,11 +127,16 @@ async def register(
         session, salt=salt.decode("utf-8"), account_id=account.account_id
     )
 
-    account_login_method = await LoginMethodRepo.create(
+    await LoginMethodRepo.create(
         session,
         account_id=account.account_id,
         login_email=login_email,
         login_password=hashed_password.decode("utf-8"),
     )
 
-    return account_login_method
+    await UserSettingsRepo.create(
+        session,
+        account_id=account.account_id,
+    )
+
+    return {"message": "success"}

@@ -17,12 +17,14 @@ uvicorn = "^0.25.0"
 itsdangerous = "^2.1.2"
 sqladmin = "^0.16.0"
 bcrypt = "^4.1.2"
+pydantic = {extras = ["email"], version = "^2.5.3"}
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.3"
 flake8 = "^6.1.0"
 pytest-cov = "^4.1.0"
 black = "^23.12.1"
+httpx = "^0.26.0"
 
 [build-system]
 requires = ["poetry-core"]
