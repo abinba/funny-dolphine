@@ -1,5 +1,23 @@
 # Interactive Audiobooks
 
+## Overview
+
+The main idea of the project is to create a platform for interactive audiobooks. 
+
+Users can listen to audiobooks and follow the story by listening to the chapters and picking the choices that will lead to different outcomes when prompted.
+
+Current repository is a backend part of the project.
+
+Concept:
+
+[Home Page](./docs/img/Home.png)
+[Audiobook Overview Page](./docs/img/Audiobook-Overview-Page.png)
+
+[Search](./docs/img/Search-Found.png)
+[Listening Zoomout](./docs/img/Listening-zoomout.png)
+
+[Listening With Text](./docs/img/Listening-fulltext.png)
+
 ## Technology Stack
 
 - Python 3.11

@@ -70,7 +70,7 @@ class ServiceAuthProvider(AuthProvider):
         self,
         username: str,
         password: str,
-        remember_me: bool,
+        remember_me: bool,  # noqa
         request: Request,
         response: Response,
     ) -> Response:
