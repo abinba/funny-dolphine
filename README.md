@@ -10,13 +10,11 @@ Current repository is a backend part of the project.
 
 Concept:
 
-[Home Page](./docs/img/Home.png)
-[Audiobook Overview Page](./docs/img/Audiobook-Overview-Page.png)
-
-[Search](./docs/img/Search-Found.png)
-[Listening Zoomout](./docs/img/Listening-zoomout.png)
-
-[Listening With Text](./docs/img/Listening-fulltext.png)
+<img src="./docs/img/Home.png" alt="Home" height="500px">
+<img src="./docs/img/Audiobook-Overview-Page.png" alt="Audiobook Overview Page" height="500px">
+<img src="./docs/img/Search-Found.png" alt="Search" height="500px">
+<img src="./docs/img/Listening-zoomout.png" alt="Listening Zoomout" height="500px">
+<img src="./docs/img/Listening-fulltext.png" alt="Listening With Text" height="500px">
 
 ## Technology Stack
 
